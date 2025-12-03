@@ -1,0 +1,20 @@
+﻿@model string
+
+<div class="gifts-widget">
+@*     @{
+        var catalogProductsViewData = new ViewDataDictionary(ViewData);
+        catalogProductsViewData["fetchUrl"] = Html.Raw(Url.RouteUrl("GetCategoryProducts", new { categoryId =3}));
+    }
+    @await Html.PartialAsync("_CatalogProducts", Model.CatalogProductsModel, catalogProductsViewData)
+
+ *@
+
+
+    <button type="button" class="btn btn-primary" onclick="showGreeting()">Hello</button>
+</div>
+
+<script>
+    function showGreeting() {
+        alert('Hello @Model');
+    }
+</script>

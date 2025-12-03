@@ -1,0 +1,13 @@
+﻿{
+  "Group": "other",
+  "FriendlyName": "Gifts",
+  "SystemName": "Ecomzen.Gifts",
+  "Version": "1.00",
+  "SupportedVersions": [
+    "4.80", "4.90"
+  ],
+  "Author": "Ecomzen",
+  "DisplayOrder": 1,
+  "FileName": "Ecomzen.Plugin.Misc.Gifts.dll",
+  "Description": "A gifts module similar to Temu"
+}
