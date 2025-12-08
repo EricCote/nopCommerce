@@ -42,19 +42,28 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
 
     #region Methods
 
-    public Type GetWidgetViewComponent(string widgetZone)
-    {
-        return typeof(GiftsViewComponent);
-    }
 
     public bool HideInWidgetList => false;
+
+
+    public Type GetWidgetViewComponent(string widgetZone)
+    {
+        if (widgetZone == PublicWidgetZones.HeadHtmlTag)
+            return typeof(GiftsGlobalStylesViewComponent);
+        
+        if (widgetZone == PublicWidgetZones.OrderSummaryContentAfter)
+            return typeof(GiftsViewComponent);
+        
+        return typeof(GiftsViewComponent);
+    }
 
     public Task<IList<string>> GetWidgetZonesAsync()
     {
         return Task.FromResult<IList<string>>(new List<string>
         {
-            PublicWidgetZones.OrderSummaryContentAfter // Widget will be displayed in the order summary content area
-            // You can change this to any widget zone
+            PublicWidgetZones.OrderSummaryContentAfter,
+            PublicWidgetZones.HeadHtmlTag             // Global CSS/JS injection
+    
         });
     }
 
@@ -72,11 +81,49 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
     /// <returns>A task that represents the asynchronous operation</returns>
     public override async Task InstallAsync()
     {
+        // Install default settings
+        await _settingService.SaveSettingAsync(new GiftsSettings
+        {
+            GiftsCategoryId = 0,
+            WalletCategoryId = 0,
+            PercentageGifts = 10m,
+            GiftButtonForeground = "#FFFFFF",
+            GiftButtonBackground = "#4CAF50",
+            GiftButtonBorder = "#4CAF50",
+            ExceedButtonForeground = "#FFFFFF",
+            ExceedButtonBackground = "#DC3545",
+            ExceedButtonBorder = "#DC3545"
+        });
+
         // Add localization resources
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
         {
-            ["Plugins.Ecomzen.Gifts.Name"] = "Greeting Name",
-            ["Plugins.Ecomzen.Gifts.Fields.Name.Hint"] = "Enter the name to display in the greeting alert"
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId"] = "Gift Category",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId.Hint"] = "Select the category for gift products",
+            ["Plugins.Ecomzen.Gifts.Fields.WalletCategoryId"] = "Wallet Exclusion Category",
+            ["Plugins.Ecomzen.Gifts.Fields.WalletCategoryId.Hint"] = "Select the category to exlude products from the Gift Wallet",
+            ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts"] = "Gift Percentage",
+            ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts.Hint"] = "Enter the percentage for gifts (e.g., 10 for 10%)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground"] = "Gift Button Text Color",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground.Hint"] = "Color for gift button text (e.g., #FFFFFF)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBackground"] = "Gift Button Background Color",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBackground.Hint"] = "Background color for gift buttons (e.g., #4CAF50)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBorder"] = "Gift Button Border Color",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBorder.Hint"] = "Border color for gift buttons (e.g., #4CAF50)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonForeground"] = "Exceeded Wallet Button Text Color",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonForeground.Hint"] = "Color for exceeded wallet button text (e.g., #FFFFFF)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground"] = "Exceeded Wallet Button Background Color",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground.Hint"] = "Background color for exceeded wallet buttons (e.g., #DC3545)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder"] = "Exceeded Wallet Button Border Color",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder.Hint"] = "Border color for exceeded wallet buttons (e.g., #DC3545)",
+            ["Plugins.Ecomzen.Gifts.GiftWallet"] = "Your Gift Wallet",
+            ["Plugins.Ecomzen.Gifts.NoProducts"] = "No gifts are available at this time.",
+            ["Plugins.Ecomzen.Gifts.Spent"] = "Spent",
+            ["Plugins.Ecomzen.Gifts.Remaining"] = "Remaining Balance",
+            ["Plugins.Ecomzen.Gifts.Locked"] = "Locked",
+            ["Plugins.Ecomzen.Gifts.InsufficientWallet"] = "Insufficient gift wallet balance for this product",
+            ["Plugins.Ecomzen.Gifts.TotalValue"] = "Total value of your gifts:",
+            ["Plugins.Ecomzen.Gifts.ItemsRemovedNotification"] = "Gifts were removed because you need to add more products."
         });
 
         await base.InstallAsync();
@@ -88,6 +135,9 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
     /// <returns>A task that represents the asynchronous operation</returns>
     public override async Task UninstallAsync()
     {
+        // Delete settings
+        await _settingService.DeleteSettingAsync<GiftsSettings>();
+
         // Deactivate widget if it's active
         if (_widgetSettings.ActiveWidgetSystemNames.Contains("Ecomzen.Gifts"))
         {

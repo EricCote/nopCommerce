@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Ecomzen.Plugin.Misc.Gifts.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
-using Ecomzen.Plugin.Misc.Gifts.Services;
 
 namespace Ecomzen.Plugin.Misc.Gifts.Infrastructure;
 
@@ -16,13 +16,14 @@ public class PluginNopStartup : INopStartup
     /// <param name="configuration">Configuration of the application</param>
     public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
+        // Register the gifts wallet service
+        services.AddScoped<IGiftsWalletService, GiftsWalletService>();
+
+
         services.Configure<RazorViewEngineOptions>(options =>
         {
             options.ViewLocationExpanders.Add(new ViewLocationExpander());
         });
-
-        //register services and interfaces
-        services.AddScoped<IGiftsGreetingService, GiftsGreetingService>();
     }
 
     /// <summary>

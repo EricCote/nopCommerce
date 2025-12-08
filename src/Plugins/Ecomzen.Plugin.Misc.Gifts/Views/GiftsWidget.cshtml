@@ -1,0 +1,42 @@
+﻿@model Ecomzen.Plugin.Misc.Gifts.Models.GiftsWidgetModel
+
+<div class="gifts-widget">
+    @if (Model.GiftWalletAmount > 0)
+    {
+        var remainingBalance = Model.GiftWalletAmount - Model.GiftWalletSpent;
+        var formattedRemainingBalance = remainingBalance.ToString("C");
+        
+        <div class="gift-wallet-amount" style="color: #666; font-size: 1.2em; margin-bottom: 15px; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">
+            <div style="margin-bottom: 5px;">
+                <strong>@T("Plugins.Ecomzen.Gifts.GiftWallet"):</strong> @Model.FormattedGiftWalletAmount
+            </div>
+            @if (Model.GiftWalletSpent > 0)
+            {
+                <div style="font-size: 0.9em; color: #999;">
+                    @T("Plugins.Ecomzen.Gifts.Spent"): @Model.FormattedGiftWalletSpent
+                </div>
+                <div style="font-size: 0.95em; color: #333; margin-top: 5px;">
+                    <strong>@T("Plugins.Ecomzen.Gifts.Remaining"):</strong> @formattedRemainingBalance
+                </div>
+            }
+        </div>
+    }
+    
+    @if (Model.Products != null && Model.Products.Any())
+    {
+        var catalogModel = new Nop.Web.Models.Catalog.CatalogProductsModel
+        {
+            Products = Model.Products.ToList()
+        };
+        
+        <div class="product-grid">
+            @await Html.PartialAsync("~/Views/Catalog/_ProductsInGridOrLines.cshtml", catalogModel)
+        </div>
+    }
+    else
+    {
+        <div class="no-data">
+            @T("Plugins.Ecomzen.Gifts.NoProducts")
+        </div>
+    }
+</div>

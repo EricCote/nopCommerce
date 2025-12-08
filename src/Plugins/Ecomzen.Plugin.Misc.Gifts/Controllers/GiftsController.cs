@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core;
 using Ecomzen.Plugin.Misc.Gifts.Models;
-using Ecomzen.Plugin.Misc.Gifts.Services;
+using Nop.Services.Catalog;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
@@ -19,7 +20,8 @@ public class GiftsController : BasePluginController
 {
     #region Fields
 
-    private readonly IGiftsGreetingService _greetingService;
+    private readonly ISettingService _settingService;
+    private readonly ICategoryService _categoryService;
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
 
@@ -28,11 +30,13 @@ public class GiftsController : BasePluginController
     #region Ctor
 
     public GiftsController(
-        IGiftsGreetingService greetingService,
+        ISettingService settingService,
+        ICategoryService categoryService,
         ILocalizationService localizationService,
         INotificationService notificationService)
     {
-        _greetingService = greetingService;
+        _settingService = settingService;
+        _categoryService = categoryService;
         _localizationService = localizationService;
         _notificationService = notificationService;
     }
@@ -43,12 +47,37 @@ public class GiftsController : BasePluginController
 
     public async Task<IActionResult> Configure()
     {
-        var greeting = await _greetingService.GetGreetingAsync();
+        var settings = await _settingService.LoadSettingAsync<GiftsSettings>();
         
         var model = new ConfigurationModel
         {
-            Name = greeting?.Name ?? "World"
+            GiftsCategoryId = settings.GiftsCategoryId,
+            WalletCategoryId = settings.WalletCategoryId,
+            PercentageGifts = settings.PercentageGifts,
+            GiftButtonForeground = settings.GiftButtonForeground,
+            GiftButtonBackground = settings.GiftButtonBackground,
+            GiftButtonBorder = settings.GiftButtonBorder,
+            ExceedButtonForeground = settings.ExceedButtonForeground,
+            ExceedButtonBackground = settings.ExceedButtonBackground,
+            ExceedButtonBorder = settings.ExceedButtonBorder
         };
+
+        // Populate categories dropdown
+        var categories = await _categoryService.GetAllCategoriesAsync(showHidden: true);
+        model.AvailableCategories.Add(new SelectListItem
+        {
+            Text = await _localizationService.GetResourceAsync("Admin.Common.Select"),
+            Value = "0"
+        });
+        
+        foreach (var category in categories)
+        {
+            model.AvailableCategories.Add(new SelectListItem
+            {
+                Text = await _categoryService.GetFormattedBreadCrumbAsync(category, categories),
+                Value = category.Id.ToString()
+            });
+        }
 
         return View("~/Plugins/Ecomzen.Gifts/Views/Configure.cshtml", model);
     }
@@ -59,13 +88,17 @@ public class GiftsController : BasePluginController
         if (!ModelState.IsValid)
             return await Configure();
 
-        var greeting = await _greetingService.GetGreetingAsync();
-        
-        if (greeting != null)
-        {
-            greeting.Name = model.Name;
-            await _greetingService.UpdateGreetingAsync(greeting);
-        }
+        var settings = await _settingService.LoadSettingAsync<GiftsSettings>();
+        settings.GiftsCategoryId = model.GiftsCategoryId;
+        settings.WalletCategoryId = model.WalletCategoryId;
+        settings.PercentageGifts = model.PercentageGifts;
+        settings.GiftButtonForeground = model.GiftButtonForeground;
+        settings.GiftButtonBackground = model.GiftButtonBackground;
+        settings.GiftButtonBorder = model.GiftButtonBorder;
+        settings.ExceedButtonForeground = model.ExceedButtonForeground;
+        settings.ExceedButtonBackground = model.ExceedButtonBackground;
+        settings.ExceedButtonBorder = model.ExceedButtonBorder;
+        await _settingService.SaveSettingAsync(settings);
 
         _notificationService.SuccessNotification(
             await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));

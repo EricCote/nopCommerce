@@ -2,35 +2,232 @@
 
 @{
     Layout = "_ConfigurePlugin";
+    
+    // Set default colors if empty
+    if (string.IsNullOrEmpty(Model.GiftButtonForeground))
+        Model.GiftButtonForeground = "#FFFFFF";
+    if (string.IsNullOrEmpty(Model.GiftButtonBackground))
+        Model.GiftButtonBackground = "#4CAF50";
+    if (string.IsNullOrEmpty(Model.GiftButtonBorder))
+        Model.GiftButtonBorder = "#4CAF50";
+    if (string.IsNullOrEmpty(Model.ExceedButtonForeground))
+        Model.ExceedButtonForeground = "#FFFFFF";
+    if (string.IsNullOrEmpty(Model.ExceedButtonBackground))
+        Model.ExceedButtonBackground = "#DC3545";
+    if (string.IsNullOrEmpty(Model.ExceedButtonBorder))
+        Model.ExceedButtonBorder = "#DC3545"; 
 }
+
+<style>
+    .color-picker-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .color-picker-group input[type="color"] {
+        width: 50px;
+        height: 38px;
+        border: 1px solid #d2d6de;
+        border-radius: 0;
+        cursor: pointer;
+    }
+    .color-picker-group input[type="text"] {
+        flex: 1;
+        max-width: 150px;
+    }
+</style>
 
 <form asp-controller="Gifts" asp-action="Configure" method="post">
     <div class="cards-group">
         <div class="card card-default">
             <div class="card-body">
-                <p>Configure the name that will be displayed when the "Hello" button is clicked.</p>
+                <p>Configure your gifts settings.</p>
             </div>
         </div>
+        
+        <!-- Basic Settings Card -->
         <div class="card card-default">
+            <div class="card-header">
+                <h5>Basic Settings</h5>
+            </div>
             <div class="card-body">
                 <div class="form-group row">
                     <div class="col-md-3">
-                        <nop-label asp-for="Name" />
+                        <nop-label asp-for="GiftsCategoryId" />
                     </div>
                     <div class="col-md-9">
-                        <nop-editor asp-for="Name" />
-                        <span asp-validation-for="Name"></span>
+                        <nop-select asp-for="GiftsCategoryId" asp-items="Model.AvailableCategories" />
+                        <span asp-validation-for="GiftsCategoryId"></span>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-3">
-                        &nbsp;
+                        <nop-label asp-for="WalletCategoryId" />
                     </div>
                     <div class="col-md-9">
-                        <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+                        <nop-select asp-for="WalletCategoryId" asp-items="Model.AvailableCategories" />
+                        <span asp-validation-for="WalletCategoryId"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="PercentageGifts" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="PercentageGifts" />
+                        <span asp-validation-for="PercentageGifts"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gift Button Color Settings Card -->
+        <div class="card card-default">
+            <div class="card-header">
+                <h5>Gift Button Colors</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="GiftButtonForeground" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-gift-fg" 
+                                   value="@Model.GiftButtonForeground" />
+                            <nop-editor asp-for="GiftButtonForeground" />
+                        </div>
+                        <span asp-validation-for="GiftButtonForeground"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="GiftButtonBackground" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-gift-bg" 
+                                   value="@Model.GiftButtonBackground" />
+                            <nop-editor asp-for="GiftButtonBackground" />
+                        </div>
+                        <span asp-validation-for="GiftButtonBackground"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="GiftButtonBorder" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-gift-border" 
+                                   value="@Model.GiftButtonBorder" />
+                            <nop-editor asp-for="GiftButtonBorder" />
+                        </div>
+                        <span asp-validation-for="GiftButtonBorder"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exceeded Wallet Button Color Settings Card -->
+        <div class="card card-default">
+            <div class="card-header">
+                <h5>Exceeded Wallet Button Colors</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ExceedButtonForeground" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-exceed-fg" 
+                                   value="@Model.ExceedButtonForeground" />
+                            <nop-editor asp-for="ExceedButtonForeground" />
+                        </div>
+                        <span asp-validation-for="ExceedButtonForeground"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ExceedButtonBackground" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-exceed-bg" 
+                                   value="@Model.ExceedButtonBackground" />
+                            <nop-editor asp-for="ExceedButtonBackground" />
+                        </div>
+                        <span asp-validation-for="ExceedButtonBackground"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ExceedButtonBorder" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-exceed-border" 
+                                   value="@Model.ExceedButtonBorder" />
+                            <nop-editor asp-for="ExceedButtonBorder" />
+                        </div>
+                        <span asp-validation-for="ExceedButtonBorder"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit" name="save" class="btn btn-primary">
+                            <i class="far fa-save"></i>
+                            @T("Admin.Common.Save")
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+<script>
+    $(function() {
+        // Function to sync color picker with text input
+        function syncColorInputs(colorPickerId, textInputId) {
+            var $colorPicker = $(colorPickerId);
+            var $textInput = $(textInputId);
+            
+            // Update text input when color picker changes
+            $colorPicker.on('input change', function() {
+                var color = $(this).val().toUpperCase();
+                $textInput.val(color);
+            });
+            
+            // Update color picker when text input changes
+            $textInput.on('input change blur', function() {
+                var color = $(this).val().trim();
+                // Validate hex color format
+                if (/^#[0-9A-F]{6}$/i.test(color)) {
+                    $colorPicker.val(color);
+                }
+            });
+        }
+        
+        // Initialize sync for all color inputs
+        syncColorInputs('#color-picker-gift-fg', '#@Html.IdFor(model => model.GiftButtonForeground)');
+        syncColorInputs('#color-picker-gift-bg', '#@Html.IdFor(model => model.GiftButtonBackground)');
+        syncColorInputs('#color-picker-gift-border', '#@Html.IdFor(model => model.GiftButtonBorder)');
+        syncColorInputs('#color-picker-exceed-fg', '#@Html.IdFor(model => model.ExceedButtonForeground)');
+        syncColorInputs('#color-picker-exceed-bg', '#@Html.IdFor(model => model.ExceedButtonBackground)');
+        syncColorInputs('#color-picker-exceed-border', '#@Html.IdFor(model => model.ExceedButtonBorder)');
+    });
+</script>

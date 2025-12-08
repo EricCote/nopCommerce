@@ -1,0 +1,246 @@
+﻿@model Ecomzen.Plugin.Misc.Gifts.Models.GiftsGlobalStylesModel
+
+@{
+    var lockedText = T("Plugins.Ecomzen.Gifts.Locked");
+    var insufficientText = T("Plugins.Ecomzen.Gifts.InsufficientWallet");
+    
+    // Get colors from model
+    var giftFg = Model.GiftButtonForeground;
+    var giftBg = Model.GiftButtonBackground;
+    var giftBorder = Model.GiftButtonBorder;
+    var exceedFg = Model.ExceedButtonForeground;
+    var exceedBg = Model.ExceedButtonBackground;
+    var exceedBorder = Model.ExceedButtonBorder;
+}
+
+<text>
+    <style>
+        /* ========================================
+                               🎁 GIFT PRODUCT STYLING - PRODUCT LISTINGS
+                               ======================================== */
+
+        /* Style ANY product box that is a gift product with configured colors */
+        .product-item[data-is-gift="true"] .product-box-add-to-cart-button {
+            background-color: @giftBg !important;
+            border-color: @giftBorder !important;
+            color: @giftFg !important;
+        }
+
+        /* Style products exceeding wallet in red */
+        .product-item[data-exceeds-wallet="true"] .product-box-add-to-cart-button {
+            background-color: @exceedBg !important;
+            border-color: @exceedBorder !important;
+            color: @exceedFg !important;
+        }
+
+        /* Badge for locked products */
+        .product-item[data-exceeds-wallet="true"]::before {
+            content: "🔒 @lockedText";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: @exceedBg;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .product-item {
+            position: relative;
+        }
+
+        /* ========================================
+                               🎁 GIFT PRODUCT STYLING - PRODUCT DETAILS PAGE
+                               ======================================== */
+
+        /* Target the product details page container */
+        .product-details-page [data-productid][data-is-gift="true"] .add-to-cart-button,
+        .product-variant-line[data-productid][data-is-gift="true"] .add-to-cart-button {
+            background-color: @giftBg !important;
+            border-color: @giftBorder !important;
+            color: @giftFg !important;
+        }
+
+        /* Red styling for products exceeding wallet on details page */
+        .product-details-page [data-productid][data-exceeds-wallet="true"] .add-to-cart-button,
+        .product-variant-line[data-productid][data-exceeds-wallet="true"] .add-to-cart-button {
+            background-color: @exceedBg !important;
+            border-color: @exceedBorder !important;
+            color: @exceedFg !important;
+        }
+
+        /* Locked badge for product details page */
+        .product-details-page [data-productid][data-exceeds-wallet="true"] .product-essential::before,
+        .product-variant-line[data-productid][data-exceeds-wallet="true"]::before {
+            content: "🔒 @lockedText";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: @exceedBg;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .product-details-page .product-essential {
+            position: relative;
+        }
+
+        .product-variant-line {
+            position: relative;
+        }
+    </style>
+
+    <script asp-location="Footer">
+        // Color utility function to calculate hover colors
+        function calculateHoverColor(hexColor, darkenPercent = 10) {
+            // Remove # if present
+            hexColor = hexColor.replace('#', '');
+            
+            // Convert to RGB
+            const r = parseInt(hexColor.substring(0, 2), 16);
+            const g = parseInt(hexColor.substring(2, 4), 16);
+            const b = parseInt(hexColor.substring(4, 6), 16);
+            
+            // Darken by percentage
+            const factor = 1 - (darkenPercent / 100);
+            const newR = Math.round(r * factor);
+            const newG = Math.round(g * factor);
+            const newB = Math.round(b * factor);
+            
+            // Convert back to hex
+            return '#' + 
+                newR.toString(16).padStart(2, '0') + 
+                newG.toString(16).padStart(2, '0') + 
+                newB.toString(16).padStart(2, '0');
+        }
+
+        // Apply hover colors dynamically
+        (function() {
+            const giftHoverBg = calculateHoverColor('@giftBg', 10);
+            const giftHoverBorder = calculateHoverColor('@giftBorder', 10);
+            const exceedHoverBg = calculateHoverColor('@exceedBg', 10);
+            const exceedHoverBorder = calculateHoverColor('@exceedBorder', 10);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                /* Gift button hover styles */
+                .product-item[data-is-gift="true"] .product-box-add-to-cart-button:hover,
+                .product-details-page [data-productid][data-is-gift="true"] .add-to-cart-button:hover,
+                .product-variant-line[data-productid][data-is-gift="true"] .add-to-cart-button:hover {
+                    background-color: ${giftHoverBg} !important;
+                    border-color: ${giftHoverBorder} !important;
+                }
+                
+                /* Exceed button hover styles */
+                .product-item[data-exceeds-wallet="true"] .product-box-add-to-cart-button:hover,
+                .product-details-page [data-productid][data-exceeds-wallet="true"] .add-to-cart-button:hover,
+                .product-variant-line[data-productid][data-exceeds-wallet="true"] .add-to-cart-button:hover {
+                    background-color: ${exceedHoverBg} !important;
+                    border-color: ${exceedHoverBorder} !important;
+                }
+            `;
+            document.head.appendChild(style);
+        })();
+
+        //restore page position
+        window.addEventListener('load', function() {
+            var scrollPos = sessionStorage.getItem('scrollPos');
+            if (scrollPos) {
+                window.scrollTo(0, parseInt(scrollPos));
+                sessionStorage.removeItem('scrollPos'); // Clear after use
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Convert arrays to Sets for O(1) lookup instead of O(n)
+            var giftProductIdsSet = new Set(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.GiftProductIds)));
+            var exceedingProductIdsSet = new Set(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ProductIdsExceedingWallet)));
+            var insufficientWalletMessage = '@insufficientText';
+            var isShoppingCartPage = !!document.querySelector(".shopping-cart-page")
+            var itemsWereRemoved = @(Model.ItemsAreRemoved ? "true" : "false");
+           
+            if (isShoppingCartPage && itemsWereRemoved){
+               // Show notification
+               displayBarNotification('@T("Plugins.Ecomzen.Gifts.ItemsRemovedNotification")', 'warning', 3000);
+
+               // Trigger cart update
+               setTimeout(function() {
+                   var updateButton = document.querySelector('#updatecart');
+                   if (updateButton) {
+                       updateButton.click();
+                   }
+               }, 500);
+           }
+
+            //When on a shopping cart page, display the gift value in the totals section
+            //this total section is updated with ajax, so we subscribe the ajax completed event, 
+            //"checkout_attributes_changed", to detect changes and reprint the changes
+            if (isShoppingCartPage) {
+                $(document).on('checkout_attributes_changed', function(event) {
+                    const firstRow = document.querySelector('.order-subtotal');
+                    const newRow = firstRow.cloneNode(true);
+                    newRow.className = 'order-gifts'
+                    const labelCell = newRow.querySelector('.cart-total-left label');
+                    const valueCell = newRow.querySelector('.cart-total-right .value-summary');
+                    labelCell.textContent = '@T("Plugins.Ecomzen.Gifts.TotalValue")';
+                    valueCell.textContent = '@Model.GiftValue';
+                    const r = firstRow.insertAdjacentElement('afterend', newRow);
+                    console.log(r.outerHTML);
+                });
+           
+            }
+
+            // ✅ OPTIMIZED: Find products on page FIRST (10-20 items), then check against Sets
+            // Target BOTH product listings (.product-item) AND product details page (.product-details-page)
+            var allProductsOnPage = document.querySelectorAll('.product-item[data-productid], .product-details-page[data-productid], .product-variant-line[data-productid]');
+
+            allProductsOnPage.forEach(function(productElement) {
+                var productId = parseInt(productElement.getAttribute('data-productid'));
+
+                // O(1) lookup instead of looping through arrays
+                if (giftProductIdsSet.has(productId)) {
+                    productElement.setAttribute('data-is-gift', 'true');
+
+                    if (isShoppingCartPage) {
+                        productElement.addEventListener('click', function(e) {
+                            // store page position
+                            window.addEventListener('beforeunload', function() {
+                                sessionStorage.setItem('scrollPos', window.scrollY);
+                            });
+                            //delay half a second
+                            window.setTimeout(function() {
+                                // Refresh cart to update totals after adding gift
+                                document.querySelector("#updatecart").click();
+                            }, 500);
+                        });
+                    }
+
+                    // Check if it exceeds wallet
+                    if (exceedingProductIdsSet.has(productId)) {
+                        productElement.setAttribute('data-exceeds-wallet', 'true');
+                        // Override click handler for BOTH button types
+                        var button = productElement.querySelector('.product-box-add-to-cart-button, .add-to-cart-button');
+                        if (button) {
+                            button.onclick = function(e) {
+                                e.preventDefault();
+                                // ✅ Use NopCommerce's native bar notification system
+                                // displayBarNotification(message, messagetype, timeout)
+                                // messagetype: 'error' for red, 'success' for green, 'warning' for orange
+                                // timeout: 0 = no auto-hide, or milliseconds
+                                displayBarNotification(insufficientWalletMessage, 'error', 5000);
+                                return false;
+                            };
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</text>
