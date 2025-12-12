@@ -11,8 +11,15 @@ public record GiftsWidgetModel
 
     public decimal GiftWalletAmount { get; set; }
     public decimal GiftWalletSpent { get; set; }
+
+    public decimal giftWalletRemaining => GiftWalletAmount - GiftWalletSpent;
     public string FormattedGiftWalletAmount { get; set; }
     public string FormattedGiftWalletSpent { get; set; }
-    public IEnumerable<ProductOverviewModel> Products { get; set; }
 
+    public string FormattedGiftWalletRemaining { get; set; }
+
+    public bool DisplayWalletDetails { get; set; }
+    public string GiftsDescription { get; set; }
+    public string LockedText { get; set; }
+    public IEnumerable<ProductOverviewModel> Products { get; set; }
 }

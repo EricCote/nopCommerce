@@ -1,9 +1,12 @@
 ﻿using Ecomzen.Plugin.Misc.Gifts.Models;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Discounts;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
+using Nop.Services.Customers;
+using Nop.Services.Discounts;
 using Nop.Services.Orders;
 
 namespace Ecomzen.Plugin.Misc.Gifts.Services;
@@ -19,6 +22,8 @@ public class GiftsWalletService : IGiftsWalletService
     private readonly IProductService _productService;
     private readonly IShoppingCartService _shoppingCartService;
     private readonly ICategoryService _categoryService;
+    private readonly ICustomerService _customerService;
+    private readonly IDiscountService _discountService;
 
     #endregion
 
@@ -28,12 +33,16 @@ public class GiftsWalletService : IGiftsWalletService
         ISettingService settingService,
         IProductService productService,
         IShoppingCartService shoppingCartService,
-        ICategoryService categoryService)
+        ICategoryService categoryService,
+        ICustomerService customerService,
+        IDiscountService discountService)
     {
         _settingService = settingService;
         _productService = productService;
         _shoppingCartService = shoppingCartService;
         _categoryService = categoryService;
+        _customerService = customerService;
+        _discountService = discountService;
     }
 
     #endregion
@@ -44,12 +53,12 @@ public class GiftsWalletService : IGiftsWalletService
     /// Calculate gift wallet information for a customer
     /// </summary>
     /// <param name="customer">Customer</param>
-    /// <param name="storeId">Store identifier</param>
+
     /// <returns>
     /// A task that represents the asynchronous operation
     /// The task result contains the gift wallet calculation result
     /// </returns>
-    public async Task<GiftsWalletCalculationResult> CalculateGiftWalletAsync(Customer customer, int storeId, bool canDelete)
+    public async Task<GiftsWalletCalculationResult> CalculateGiftWalletAsync(Customer customer, bool canDelete)
     {
         var settings = await _settingService.LoadSettingAsync<GiftsSettings>();
         
@@ -67,9 +76,32 @@ public class GiftsWalletService : IGiftsWalletService
         
         if (giftsCategoryId == 0)
             return result;
+        var excludedCategoryId = settings.ExcludeCategoryId;
 
         // Get shopping cart
-        var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, storeId);
+        var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
+
+        // Check if any GLOBAL/ORDER-LEVEL discount codes are applied
+        var appliedDiscountCodes = await _customerService.ParseAppliedDiscountCouponCodesAsync(customer);
+        var hasGlobalDiscountApplied = false;
+        
+        if (appliedDiscountCodes.Length > 0)
+        {
+            // Get the actual discount objects for the applied codes
+            foreach (var code in appliedDiscountCodes)
+            {
+                var discounts = await _discountService.GetAllDiscountsAsync(couponCode: code);
+                
+                // Check if any of these discounts are order-level (global) discounts
+                if (discounts.Any(d => 
+                    d.DiscountType == DiscountType.AssignedToOrderTotal || 
+                    d.DiscountType == DiscountType.AssignedToOrderSubTotal))
+                {
+                    hasGlobalDiscountApplied = true;
+                    break;
+                }
+            }
+        }
 
         // Calculate gift wallet amount based on regular-priced items only
         if (cart.Any() && settings.PercentageGifts > 0)
@@ -87,21 +119,22 @@ public class GiftsWalletService : IGiftsWalletService
                 var (unitPrice, discountAmount, _) = await _shoppingCartService.GetUnitPriceAsync(cartItem, true);
                 
                 // Check if product is in wallet category (only if wallet category is configured)
-                bool isWalletProduct = false;
-                if (settings.WalletCategoryId > 0 && product.Price > 0)
+                bool isExcludedProduct = false;
+                if (excludedCategoryId > 0 && product.Price > 0)
                 {
-                    var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(product.Id);
-                    isWalletProduct = productCategories.Any(pc => pc.CategoryId == settings.WalletCategoryId);
+                    var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(product.Id, showHidden: true);
+                    isExcludedProduct = productCategories.Any(pc => pc.CategoryId == excludedCategoryId);
                 }
                 
                 // Only include items that are:
                 // 1. Not discounted (discountAmount == 0)
                 // 2. Not in the wallet category
+                // 3. No global discount is applied (optional - you can use hasGlobalDiscountApplied here)
                 bool isDiscounted = discountAmount > 0;
  
                 
-                // If item is regular-priced (not discounted, not on sale, and not a wallet product)
-                if (!isDiscounted && !isWalletProduct)
+                // If item is regular-priced (not discounted and not a excluded product)
+                if (!isDiscounted && !isExcludedProduct)
                 {
                     // Add the subtotal for this item (unit price * quantity)
                     regularPricedItemsTotal += unitPrice * cartItem.Quantity;
@@ -116,7 +149,17 @@ public class GiftsWalletService : IGiftsWalletService
             }
             
             // Calculate gift wallet amount as percentage of regular-priced items total
-            result.GiftWalletAmount = regularPricedItemsTotal * settings.PercentageGifts / 100m;
+            if (hasGlobalDiscountApplied)
+            {
+                // If a global discount is applied, set gift wallet amount to zero
+                result.GiftWalletAmount = 0;
+                result.HasGlobalDiscountApplied = true;
+            }
+            else
+            {
+                result.GiftWalletAmount = regularPricedItemsTotal * settings.PercentageGifts / 100m;
+                result.HasGlobalDiscountApplied = false;
+            }
         }
 
         if (result.GiftWalletAmount < result.GiftWalletSpent && canDelete){
@@ -139,7 +182,6 @@ public class GiftsWalletService : IGiftsWalletService
         // Get ALL gift product IDs from category
         var giftProducts = await _productService.SearchProductsAsync(
             categoryIds: new List<int> { giftsCategoryId },
-            storeId: storeId,
             visibleIndividuallyOnly: true,
             pageSize: int.MaxValue // Get all gift products
         );

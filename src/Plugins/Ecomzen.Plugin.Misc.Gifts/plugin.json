@@ -1,5 +1,5 @@
 ﻿{
-  "Group": "other",
+  "Group": "Ecomzen",
   "FriendlyName": "Gifts",
   "SystemName": "Ecomzen.Gifts",
   "Version": "1.00",
@@ -9,5 +9,5 @@
   "Author": "Ecomzen",
   "DisplayOrder": 1,
   "FileName": "Ecomzen.Plugin.Misc.Gifts.dll",
-  "Description": "A gifts module similar to Temu"
+  "Description": "A gifts module similar to Temu."
 }

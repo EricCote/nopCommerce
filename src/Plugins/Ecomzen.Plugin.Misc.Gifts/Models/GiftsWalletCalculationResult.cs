@@ -36,5 +36,13 @@ public class GiftsWalletCalculationResult
     /// </summary>
     public decimal RemainingBalance => GiftWalletAmount - GiftWalletSpent;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether items were removed due to insufficient balance
+    /// </summary>
     public bool ItemsAreRemoved { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether a global/order-level discount is applied
+    /// </summary>
+    public bool HasGlobalDiscountApplied { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿@model Ecomzen.Plugin.Misc.Gifts.Models.ConfigurationModel
+﻿@model ConfigurationModel
 
 @{
     Layout = "_ConfigurePlugin";
@@ -41,7 +41,7 @@
     <div class="cards-group">
         <div class="card card-default">
             <div class="card-body">
-                <p>Configure your gifts settings.</p>
+                @Html.Raw(T("Plugins.Ecomzen.Gifts.Configure.Description"))
             </div>
         </div>
         
@@ -62,11 +62,11 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-3">
-                        <nop-label asp-for="WalletCategoryId" />
+                        <nop-label asp-for="ExcludeCategoryId" />
                     </div>
                     <div class="col-md-9">
-                        <nop-select asp-for="WalletCategoryId" asp-items="Model.AvailableCategories" />
-                        <span asp-validation-for="WalletCategoryId"></span>
+                        <nop-select asp-for="ExcludeCategoryId" asp-items="Model.AvailableCategories" />
+                        <span asp-validation-for="ExcludeCategoryId"></span>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -78,6 +78,60 @@
                         <span asp-validation-for="PercentageGifts"></span>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DisplayWalletDetails" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="DisplayWalletDetails" />
+                        <span asp-validation-for="DisplayWalletDetails"></span>
+                    </div>
+                </div>
+                
+                @(await Html.LocalizedEditorAsync<ConfigurationModel, ConfigurationLocalizedModel>("giftsDescription-localized",
+                    @<div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="@Model.Locales[item].GiftsDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="@Model.Locales[item].GiftsDescription" asp-template="RichEditor" />
+                                <span asp-validation-for="@Model.Locales[item].GiftsDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="@Model.Locales[item].LockedText" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="@Model.Locales[item].LockedText" />
+                                <span asp-validation-for="@Model.Locales[item].LockedText"></span>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="@Model.Locales[item].LanguageId" />
+                    </div>
+                    ,
+                    @<div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="GiftsDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="GiftsDescription" asp-template="RichEditor" />
+                                <span asp-validation-for="GiftsDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="LockedText" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="LockedText" />
+                                <span asp-validation-for="LockedText"></span>
+                            </div>
+                        </div>
+                    </div>
+                ))
             </div>
         </div>
 
@@ -229,5 +283,18 @@
         syncColorInputs('#color-picker-exceed-fg', '#@Html.IdFor(model => model.ExceedButtonForeground)');
         syncColorInputs('#color-picker-exceed-bg', '#@Html.IdFor(model => model.ExceedButtonBackground)');
         syncColorInputs('#color-picker-exceed-border', '#@Html.IdFor(model => model.ExceedButtonBorder)');
+        
+        // Ensure TinyMCE content is synced before form submission
+        $('form').on('submit', function(e) {
+            if (typeof tinymce !== 'undefined' && tinymce.editors) {
+                // Trigger save on all TinyMCE editors
+                tinymce.triggerSave();
+                // Also manually trigger save on each editor
+                for (var i = 0; i < tinymce.editors.length; i++) {
+                    tinymce.editors[i].save();
+                }
+            }
+            return true;
+        });
     });
 </script>

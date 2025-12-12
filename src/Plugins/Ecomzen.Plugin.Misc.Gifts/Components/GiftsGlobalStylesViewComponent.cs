@@ -6,27 +6,31 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Services.Catalog;
 using Nop.Services.Configuration;
+using Nop.Services.Localization;
 using Nop.Web.Framework.Components;
 
 public class GiftsGlobalStylesViewComponent : NopViewComponent
 {
     private readonly ISettingService _settingService;
-    private readonly IStoreContext _storeContext;
     private readonly IWorkContext _workContext;
     private readonly IPriceFormatter _priceFormatter;
     private readonly IGiftsWalletService _giftsWalletService;
+    private readonly ILocalizationService _localizationService;
 
     public GiftsGlobalStylesViewComponent(
         ISettingService settingService,
-        IStoreContext storeContext,
-        IWorkContext workContext, IPriceFormatter priceFormatter,
-        IGiftsWalletService giftsWalletService)
+
+        IWorkContext workContext, 
+        IPriceFormatter priceFormatter,
+        IGiftsWalletService giftsWalletService,
+        ILocalizationService localizationService)
     {
         _settingService = settingService;
-        _storeContext = storeContext;
+   
         _workContext = workContext;
         _giftsWalletService = giftsWalletService;
         _priceFormatter = priceFormatter;
+        _localizationService = localizationService;
     }
 
     public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
@@ -36,11 +40,24 @@ public class GiftsGlobalStylesViewComponent : NopViewComponent
         if (settings.GiftsCategoryId == 0)
             return Content(string.Empty);
 
-        var store = await _storeContext.GetCurrentStoreAsync();
         var customer = await _workContext.GetCurrentCustomerAsync();
+        var workingLanguage = await _workContext.GetWorkingLanguageAsync();
 
         // Calculate gift wallet using the service
-        var walletCalculation = await _giftsWalletService.CalculateGiftWalletAsync(customer, store.Id,true);
+        var walletCalculation = await _giftsWalletService.CalculateGiftWalletAsync(customer, true);
+
+        // Get localized locked text from settings
+        var lockedText = await _localizationService.GetLocalizedSettingAsync(
+            settings, 
+            x => x.LockedText, 
+            workingLanguage.Id, 
+            0);
+
+        // If no custom locked text is set, use the default localization resource
+        if (string.IsNullOrEmpty(lockedText))
+        {
+            lockedText = await _localizationService.GetResourceAsync("Plugins.Ecomzen.Gifts.Locked");
+        }
 
         var model = new GiftsGlobalStylesModel
         {
@@ -48,12 +65,19 @@ public class GiftsGlobalStylesViewComponent : NopViewComponent
             ProductIdsExceedingWallet = walletCalculation.ProductIdsExceedingWallet,
             GiftValue = await _priceFormatter.FormatPriceAsync(-walletCalculation.GiftValue, true, false),
             ItemsAreRemoved = walletCalculation.ItemsAreRemoved,
+            HasGlobalDiscountApplied = walletCalculation.HasGlobalDiscountApplied,
             GiftButtonForeground = settings.GiftButtonForeground,
             GiftButtonBackground = settings.GiftButtonBackground,
             GiftButtonBorder = settings.GiftButtonBorder,
             ExceedButtonForeground = settings.ExceedButtonForeground,
             ExceedButtonBackground = settings.ExceedButtonBackground,
-            ExceedButtonBorder = settings.ExceedButtonBorder
+            ExceedButtonBorder = settings.ExceedButtonBorder,
+            LockedText = lockedText,
+            // Calculate hover colors using the static method
+            GiftButtonBackgroundHover = GiftsGlobalStylesModel.CalculateHoverColor(settings.GiftButtonBackground, 10),
+            GiftButtonBorderHover = GiftsGlobalStylesModel.CalculateHoverColor(settings.GiftButtonBorder, 10),
+            ExceedButtonBackgroundHover = GiftsGlobalStylesModel.CalculateHoverColor(settings.ExceedButtonBackground, 10),
+            ExceedButtonBorderHover = GiftsGlobalStylesModel.CalculateHoverColor(settings.ExceedButtonBorder, 10)
         };
 
         return View("~/Plugins/Ecomzen.Gifts/Views/GiftsGlobalStyles.cshtml", model);

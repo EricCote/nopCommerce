@@ -85,8 +85,9 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
         await _settingService.SaveSettingAsync(new GiftsSettings
         {
             GiftsCategoryId = 0,
-            WalletCategoryId = 0,
+            ExcludeCategoryId = 0,
             PercentageGifts = 10m,
+            DisplayWalletDetails = true,
             GiftButtonForeground = "#FFFFFF",
             GiftButtonBackground = "#4CAF50",
             GiftButtonBorder = "#4CAF50",
@@ -95,15 +96,29 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             ExceedButtonBorder = "#DC3545"
         });
 
-        // Add localization resources
+        // Activate widget
+        if (!_widgetSettings.ActiveWidgetSystemNames.Contains("Ecomzen.Gifts"))
+        {
+            _widgetSettings.ActiveWidgetSystemNames.Add("Ecomzen.Gifts");
+            await _settingService.SaveSettingAsync(_widgetSettings);
+        }
+
+        // Add English localization resources
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
         {
+            ["Plugins.Ecomzen.Gifts.Configure.Description"] = "<p>Configure your gifts settings.</p>",
             ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId"] = "Gift Category",
             ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId.Hint"] = "Select the category for gift products",
-            ["Plugins.Ecomzen.Gifts.Fields.WalletCategoryId"] = "Wallet Exclusion Category",
-            ["Plugins.Ecomzen.Gifts.Fields.WalletCategoryId.Hint"] = "Select the category to exlude products from the Gift Wallet",
+            ["Plugins.Ecomzen.Gifts.Fields.ExcludeCategoryId"] = "Wallet Exclusion Category",
+            ["Plugins.Ecomzen.Gifts.Fields.ExcludeCategoryId.Hint"] = "Select the category to exclude products from the Gift Wallet",
             ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts"] = "Gift Percentage",
             ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts.Hint"] = "Enter the percentage for gifts (e.g., 10 for 10%)",
+            ["Plugins.Ecomzen.Gifts.Fields.DisplayWalletDetails"] = "Display Wallet Details",
+            ["Plugins.Ecomzen.Gifts.Fields.DisplayWalletDetails.Hint"] = "Show or hide wallet amount information to customers",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsDescription"] = "Gifts Description",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsDescription.Hint"] = "Description text shown to customers about the gift program",
+            ["Plugins.Ecomzen.Gifts.Fields.LockedText"] = "Locked Gift Text",
+            ["Plugins.Ecomzen.Gifts.Fields.LockedText.Hint"] = "Text displayed when a gift is locked (unavailable)",
             ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground"] = "Gift Button Text Color",
             ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground.Hint"] = "Color for gift button text (e.g., #FFFFFF)",
             ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBackground"] = "Gift Button Background Color",
@@ -120,11 +135,57 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             ["Plugins.Ecomzen.Gifts.NoProducts"] = "No gifts are available at this time.",
             ["Plugins.Ecomzen.Gifts.Spent"] = "Spent",
             ["Plugins.Ecomzen.Gifts.Remaining"] = "Remaining Balance",
-            ["Plugins.Ecomzen.Gifts.Locked"] = "Locked",
-            ["Plugins.Ecomzen.Gifts.InsufficientWallet"] = "Insufficient gift wallet balance for this product",
+            ["Plugins.Ecomzen.Gifts.Locked"] = "🔒 Locked",
+            ["Plugins.Ecomzen.Gifts.InsufficientWallet"] = "You need to add regular-priced products for this gift",
+            ["Plugins.Ecomzen.Gifts.GlobalDiscountApplied"] = "You cannot add a gift while a global discount is applied",
+            ["Plugins.Ecomzen.Gifts.ApplyingGlobalDiscount"] = "Gifts are removed when a global discount is applied",
             ["Plugins.Ecomzen.Gifts.TotalValue"] = "Total value of your gifts:",
-            ["Plugins.Ecomzen.Gifts.ItemsRemovedNotification"] = "Gifts were removed because you need to add more products."
+            ["Plugins.Ecomzen.Gifts.ItemsRemovedNotification"] = "Gifts were removed because you need to add more products.",
+            ["Admin.Ecomzen.Menu"] = "Ecomzen",
+            ["Admin.Ecomzen.Gifts.Menu"] = "Gift Management"
         });
+
+        // Add French localization resources
+        await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
+        {
+            ["Plugins.Ecomzen.Gifts.Configure.Description"] = "<p>Configurez les paramètres de vos cadeaux.</p>",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId"] = "Catégorie de cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsCategoryId.Hint"] = "Sélectionnez la catégorie des produits cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.ExcludeCategoryId"] = "Catégorie d'exclusion du portefeuille",
+            ["Plugins.Ecomzen.Gifts.Fields.ExcludeCategoryId.Hint"] = "Sélectionnez la catégorie pour exclure des produits du portefeuille cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts"] = "Pourcentage de cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.PercentageGifts.Hint"] = "Entrez le pourcentage pour les cadeaux (ex: 10 pour 10%)",
+            ["Plugins.Ecomzen.Gifts.Fields.DisplayWalletDetails"] = "Afficher les détails du portefeuille",
+            ["Plugins.Ecomzen.Gifts.Fields.DisplayWalletDetails.Hint"] = "Afficher ou masquer les informations du montant du portefeuille aux clients",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsDescription"] = "Description des cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftsDescription.Hint"] = "Texte de description affiché aux clients concernant le programme de cadeaux",
+            ["Plugins.Ecomzen.Gifts.Fields.LockedText"] = "Texte cadeau verrouillé",
+            ["Plugins.Ecomzen.Gifts.Fields.LockedText.Hint"] = "Texte affiché lorsqu'un cadeau est verrouillé (non disponible)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground"] = "Couleur du texte du bouton cadeau",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground.Hint"] = "Couleur du texte du bouton cadeau (ex: #FFFFFF)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBackground"] = "Couleur de fond du bouton cadeau",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBackground.Hint"] = "Couleur de fond des boutons cadeaux (ex: #4CAF50)",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBorder"] = "Couleur de bordure du bouton cadeau",
+            ["Plugins.Ecomzen.Gifts.Fields.GiftButtonBorder.Hint"] = "Couleur de bordure des boutons cadeaux (ex: #4CAF50)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonForeground"] = "Couleur du texte du bouton portefeuille dépassé",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonForeground.Hint"] = "Couleur du texte du bouton portefeuille dépassé (ex: #FFFFFF)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground"] = "Couleur de fond du bouton portefeuille dépassé",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground.Hint"] = "Couleur de fond des boutons portefeuille dépassé (ex: #DC3545)",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder"] = "Couleur de bordure du bouton portefeuille dépassé",
+            ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder.Hint"] = "Couleur de bordure des boutons portefeuille dépassé (ex: #DC3545)",
+            ["Plugins.Ecomzen.Gifts.GiftWallet"] = "Votre portefeuille cadeaux",
+            ["Plugins.Ecomzen.Gifts.NoProducts"] = "Aucun cadeau n'est disponible pour le moment.",
+            ["Plugins.Ecomzen.Gifts.Spent"] = "Dépensé",
+            ["Plugins.Ecomzen.Gifts.Remaining"] = "Solde restant",
+            ["Plugins.Ecomzen.Gifts.Locked"] = "🔒 Verrouillé",
+            ["Plugins.Ecomzen.Gifts.InsufficientWallet"] = "Vous devez ajouter des produits à prix régulier pour ce cadeau",
+            ["Plugins.Ecomzen.Gifts.GlobalDiscountApplied"] = "Vous ne pouvez pas ajouter un cadeau lorsqu'une remise globale est appliquée",
+            ["Plugins.Ecomzen.Gifts.ApplyingGlobalDiscount"] = "Les cadeaux sont retirés lorsqu'une remise globale est appliquée",
+            ["Plugins.Ecomzen.Gifts.TotalValue"] = "Valeur totale de vos cadeaux:",
+            ["Plugins.Ecomzen.Gifts.ItemsRemovedNotification"] = "Les cadeaux ont été retirés car vous devez ajouter plus de produits.",
+            ["Admin.Ecomzen.Menu"] = "Ecomzen",
+            ["Admin.Ecomzen.Gifts.Menu"] = "Gestion des cadeaux"
+        }, languageId: 2); // languageId 2 is typically French in nopCommerce
 
         await base.InstallAsync();
     }
@@ -147,6 +208,7 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
 
         // Delete localization resources
         await _localizationService.DeleteLocaleResourcesAsync("Plugins.Ecomzen.Gifts");
+        await _localizationService.DeleteLocaleResourcesAsync("Admin.Ecomzen");
 
         await base.UninstallAsync();
     }

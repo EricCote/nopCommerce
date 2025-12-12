@@ -15,12 +15,22 @@ public class GiftsSettings : ISettings
     /// <summary>
     /// Gets or sets the wallet category ID
     /// </summary>
-    public int WalletCategoryId { get; set; }
+    public int ExcludeCategoryId { get; set; }
 
     /// <summary>
     /// Gets or sets the percentage for gifts
     /// </summary>
     public decimal PercentageGifts { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to display wallet details
+    /// </summary>
+    public bool DisplayWalletDetails { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the gifts description
+    /// </summary>
+    public string GiftsDescription { get; set; }
 
     /// <summary>
     /// Gets or sets the gift button foreground color
@@ -51,4 +61,9 @@ public class GiftsSettings : ISettings
     /// Gets or sets the exceed button border color
     /// </summary>
     public string ExceedButtonBorder { get; set; } = "#DC3545";
+
+    /// <summary>
+    /// Gets or sets the locked gift text
+    /// </summary>
+    public string LockedText { get; set; }
 }

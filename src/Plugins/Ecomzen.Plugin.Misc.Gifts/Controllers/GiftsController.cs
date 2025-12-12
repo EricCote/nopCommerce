@@ -9,6 +9,7 @@ using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Factories;
 using Nop.Web.Framework.Mvc.Filters;
 
 namespace Ecomzen.Plugin.Misc.Gifts.Controllers;
@@ -24,6 +25,8 @@ public class GiftsController : BasePluginController
     private readonly ICategoryService _categoryService;
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
+    private readonly ILocalizedModelFactory _localizedModelFactory;
+
 
     #endregion
 
@@ -33,12 +36,16 @@ public class GiftsController : BasePluginController
         ISettingService settingService,
         ICategoryService categoryService,
         ILocalizationService localizationService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        ILocalizedModelFactory localizedModelFactory
+)
     {
         _settingService = settingService;
         _categoryService = categoryService;
         _localizationService = localizationService;
         _notificationService = notificationService;
+        _localizedModelFactory = localizedModelFactory;
+
     }
 
     #endregion
@@ -47,13 +54,17 @@ public class GiftsController : BasePluginController
 
     public async Task<IActionResult> Configure()
     {
+
         var settings = await _settingService.LoadSettingAsync<GiftsSettings>();
         
         var model = new ConfigurationModel
         {
             GiftsCategoryId = settings.GiftsCategoryId,
-            WalletCategoryId = settings.WalletCategoryId,
+            ExcludeCategoryId = settings.ExcludeCategoryId,
             PercentageGifts = settings.PercentageGifts,
+            DisplayWalletDetails = settings.DisplayWalletDetails,
+            GiftsDescription = settings.GiftsDescription,
+            LockedText = settings.LockedText,
             GiftButtonForeground = settings.GiftButtonForeground,
             GiftButtonBackground = settings.GiftButtonBackground,
             GiftButtonBorder = settings.GiftButtonBorder,
@@ -61,6 +72,12 @@ public class GiftsController : BasePluginController
             ExceedButtonBackground = settings.ExceedButtonBackground,
             ExceedButtonBorder = settings.ExceedButtonBorder
         };
+
+        model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<ConfigurationLocalizedModel>(async (locale, languageId) =>
+        {
+            locale.GiftsDescription = await _localizationService.GetLocalizedSettingAsync(settings, x => x.GiftsDescription, languageId, 0, false);
+            locale.LockedText = await _localizationService.GetLocalizedSettingAsync(settings, x => x.LockedText, languageId, 0, false);
+        });
 
         // Populate categories dropdown
         var categories = await _categoryService.GetAllCategoriesAsync(showHidden: true);
@@ -89,16 +106,43 @@ public class GiftsController : BasePluginController
             return await Configure();
 
         var settings = await _settingService.LoadSettingAsync<GiftsSettings>();
+        
         settings.GiftsCategoryId = model.GiftsCategoryId;
-        settings.WalletCategoryId = model.WalletCategoryId;
+        settings.ExcludeCategoryId = model.ExcludeCategoryId;
         settings.PercentageGifts = model.PercentageGifts;
-        settings.GiftButtonForeground = model.GiftButtonForeground;
-        settings.GiftButtonBackground = model.GiftButtonBackground;
-        settings.GiftButtonBorder = model.GiftButtonBorder;
-        settings.ExceedButtonForeground = model.ExceedButtonForeground;
-        settings.ExceedButtonBackground = model.ExceedButtonBackground;
-        settings.ExceedButtonBorder = model.ExceedButtonBorder;
+        settings.DisplayWalletDetails = model.DisplayWalletDetails;
+        settings.GiftsDescription = model.GiftsDescription ?? "<p>A gift is available when it is green. </p>";
+        settings.LockedText = model.LockedText ?? "🔒 Locked";
+        settings.GiftButtonForeground = model.GiftButtonForeground ?? "#FFFFFF";
+        settings.GiftButtonBackground = model.GiftButtonBackground ?? "#4CAF50";
+        settings.GiftButtonBorder = model.GiftButtonBorder ?? "#4CAF50";
+        settings.ExceedButtonForeground = model.ExceedButtonForeground ?? "#FFFFFF";
+        settings.ExceedButtonBackground = model.ExceedButtonBackground ?? "#DC3545";
+        settings.ExceedButtonBorder = model.ExceedButtonBorder ?? "#DC3545";
+        
+        // Save all settings (this creates the Setting records in the database)
         await _settingService.SaveSettingAsync(settings);
+
+
+        // Reload settings to ensure we have the freshly saved Setting record IDs
+        settings = await _settingService.LoadSettingAsync<GiftsSettings>();
+
+        // Now save localized versions
+        foreach (var localized in model.Locales)
+        {
+            await _localizationService.SaveLocalizedSettingAsync(settings, 
+                x => x.GiftsDescription, 
+                localized.LanguageId, 
+                localized.GiftsDescription ?? string.Empty);
+            
+            await _localizationService.SaveLocalizedSettingAsync(settings, 
+                x => x.LockedText, 
+                localized.LanguageId, 
+                localized.LockedText ?? string.Empty);
+        }
+
+        // Clear cache one final time
+        await _settingService.ClearCacheAsync();
 
         _notificationService.SuccessNotification(
             await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
