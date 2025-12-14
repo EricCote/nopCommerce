@@ -27,6 +27,9 @@ public record ConfigurationModel : BaseNopModel, ILocalizedModel<ConfigurationLo
     [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.GiftsDescription")]
     public string GiftsDescription { get; set; }
 
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.TitleDescription")]
+    public string TitleDescription { get; set; }
+
     [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.GiftButtonForeground")]
     public string GiftButtonForeground { get; set; }
 

@@ -55,7 +55,7 @@ public class GiftsViewComponent : NopViewComponent
         var actionName = routeData.Values["action"]?.ToString();
         
         // Don't display on checkout pages, only on cart
-        if (string.Equals(controllerName, "Checkout", StringComparison.InvariantCultureIgnoreCase))
+        if (!string.Equals(controllerName, "ShoppingCart", StringComparison.InvariantCultureIgnoreCase))
         {
             return Content(string.Empty);
         }
@@ -87,7 +87,14 @@ public class GiftsViewComponent : NopViewComponent
         // Get localized description from settings
         var giftsDescription = await _localizationService.GetLocalizedSettingAsync(
             settings, 
-            x => x.GiftsDescription, 
+            x => x.DescriptionDetails, 
+            workingLanguage.Id, 
+            0);
+
+        // Get localized title description from settings
+        var titleDescription = await _localizationService.GetLocalizedSettingAsync(
+            settings, 
+            x => x.DescriptionTitle, 
             workingLanguage.Id, 
             0);
 
@@ -115,6 +122,7 @@ public class GiftsViewComponent : NopViewComponent
 
             DisplayWalletDetails = settings.DisplayWalletDetails,
             GiftsDescription = giftsDescription,
+            TitleDescription = titleDescription,
             LockedText = lockedText,
             Products = productOverviewModels
         };

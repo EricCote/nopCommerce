@@ -59,11 +59,13 @@ public class GiftsGlobalStylesViewComponent : NopViewComponent
             lockedText = await _localizationService.GetResourceAsync("Plugins.Ecomzen.Gifts.Locked");
         }
 
+        var giftValue = await _priceFormatter.FormatPriceAsync(walletCalculation.GiftValue, true, false);
+
         var model = new GiftsGlobalStylesModel
         {
             GiftProductIds = walletCalculation.GiftProductIds,
             ProductIdsExceedingWallet = walletCalculation.ProductIdsExceedingWallet,
-            GiftValue = await _priceFormatter.FormatPriceAsync(-walletCalculation.GiftValue, true, false),
+            GiftValue = $"({giftValue})",
             ItemsAreRemoved = walletCalculation.ItemsAreRemoved,
             HasGlobalDiscountApplied = walletCalculation.HasGlobalDiscountApplied,
             GiftButtonForeground = settings.GiftButtonForeground,

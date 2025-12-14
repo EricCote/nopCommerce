@@ -63,7 +63,8 @@ public class GiftsController : BasePluginController
             ExcludeCategoryId = settings.ExcludeCategoryId,
             PercentageGifts = settings.PercentageGifts,
             DisplayWalletDetails = settings.DisplayWalletDetails,
-            GiftsDescription = settings.GiftsDescription,
+            GiftsDescription = settings.DescriptionDetails,
+            TitleDescription = settings.DescriptionTitle,
             LockedText = settings.LockedText,
             GiftButtonForeground = settings.GiftButtonForeground,
             GiftButtonBackground = settings.GiftButtonBackground,
@@ -75,7 +76,8 @@ public class GiftsController : BasePluginController
 
         model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<ConfigurationLocalizedModel>(async (locale, languageId) =>
         {
-            locale.GiftsDescription = await _localizationService.GetLocalizedSettingAsync(settings, x => x.GiftsDescription, languageId, 0, false);
+            locale.GiftsDescription = await _localizationService.GetLocalizedSettingAsync(settings, x => x.DescriptionDetails, languageId, 0, false);
+            locale.TitleDescription = await _localizationService.GetLocalizedSettingAsync(settings, x => x.DescriptionTitle, languageId, 0, false);
             locale.LockedText = await _localizationService.GetLocalizedSettingAsync(settings, x => x.LockedText, languageId, 0, false);
         });
 
@@ -111,8 +113,9 @@ public class GiftsController : BasePluginController
         settings.ExcludeCategoryId = model.ExcludeCategoryId;
         settings.PercentageGifts = model.PercentageGifts;
         settings.DisplayWalletDetails = model.DisplayWalletDetails;
-        settings.GiftsDescription = model.GiftsDescription ?? "<p>A gift is available when it is green. </p>";
-        settings.LockedText = model.LockedText ?? "🔒 Locked";
+        settings.DescriptionDetails = model.GiftsDescription;
+        settings.DescriptionTitle = model.TitleDescription;
+        settings.LockedText = model.LockedText;
         settings.GiftButtonForeground = model.GiftButtonForeground ?? "#FFFFFF";
         settings.GiftButtonBackground = model.GiftButtonBackground ?? "#4CAF50";
         settings.GiftButtonBorder = model.GiftButtonBorder ?? "#4CAF50";
@@ -131,9 +134,14 @@ public class GiftsController : BasePluginController
         foreach (var localized in model.Locales)
         {
             await _localizationService.SaveLocalizedSettingAsync(settings, 
-                x => x.GiftsDescription, 
+                x => x.DescriptionDetails, 
                 localized.LanguageId, 
                 localized.GiftsDescription ?? string.Empty);
+            
+            await _localizationService.SaveLocalizedSettingAsync(settings, 
+                x => x.DescriptionTitle, 
+                localized.LanguageId, 
+                localized.TitleDescription ?? string.Empty);
             
             await _localizationService.SaveLocalizedSettingAsync(settings, 
                 x => x.LockedText, 

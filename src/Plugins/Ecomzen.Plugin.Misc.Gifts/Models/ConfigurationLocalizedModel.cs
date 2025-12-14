@@ -10,6 +10,9 @@ public record ConfigurationLocalizedModel : ILocalizedLocaleModel
     [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.GiftsDescription")]
     public string GiftsDescription { get; set; }
 
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.TitleDescription")]
+    public string TitleDescription { get; set; }
+
     [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.LockedText")]
     public string LockedText { get; set; }
 }

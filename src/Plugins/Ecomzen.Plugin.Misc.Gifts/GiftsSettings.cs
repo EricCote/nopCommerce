@@ -30,7 +30,12 @@ public class GiftsSettings : ISettings
     /// <summary>
     /// Gets or sets the gifts description
     /// </summary>
-    public string GiftsDescription { get; set; }
+    public string DescriptionDetails { get; set; }
+
+    /// <summary>
+    /// Gets or sets the title description
+    /// </summary>
+    public string DescriptionTitle { get; set; }
 
     /// <summary>
     /// Gets or sets the gift button foreground color

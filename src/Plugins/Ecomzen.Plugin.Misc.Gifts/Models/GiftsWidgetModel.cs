@@ -20,6 +20,7 @@ public record GiftsWidgetModel
 
     public bool DisplayWalletDetails { get; set; }
     public string GiftsDescription { get; set; }
+    public string TitleDescription { get; set; }
     public string LockedText { get; set; }
     public IEnumerable<ProductOverviewModel> Products { get; set; }
 }

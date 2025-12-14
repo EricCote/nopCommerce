@@ -101,6 +101,15 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-3">
+                                <nop-label asp-for="@Model.Locales[item].TitleDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="@Model.Locales[item].TitleDescription" />
+                                <span asp-validation-for="@Model.Locales[item].TitleDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
                                 <nop-label asp-for="@Model.Locales[item].LockedText" />
                             </div>
                             <div class="col-md-9">
@@ -119,6 +128,15 @@
                             <div class="col-md-9">
                                 <nop-editor asp-for="GiftsDescription" asp-template="RichEditor" />
                                 <span asp-validation-for="GiftsDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="TitleDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="TitleDescription" />
+                                <span asp-validation-for="TitleDescription"></span>
                             </div>
                         </div>
                         <div class="form-group row">

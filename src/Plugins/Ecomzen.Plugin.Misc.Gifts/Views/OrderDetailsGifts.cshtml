@@ -1,0 +1,28 @@
+@model Ecomzen.Plugin.Misc.Gifts.Models.OrderDetailsGiftsModel
+
+@if (Model.GiftValue > 0 || Model.GiftCost > 0)
+{
+    <div class="section gifts-info">
+        <div class="title">
+            <strong>@T("Plugins.Ecomzen.Gifts.OrderDetails.Title")</strong>
+        </div>
+        <div class="info">
+            <ul class="info-list">
+                @if (Model.GiftValue > 0)
+                {
+                    <li class="gift-value">
+                        <span class="label">@T("Plugins.Ecomzen.Gifts.OrderDetails.GiftValue"):</span>
+                        <span class="value">@Model.GiftValueFormatted</span>
+                    </li>
+                }
+            @*     @if (Model.GiftCost > 0)
+                {
+                    <li class="gift-cost">
+                        <span class="label">@T("Plugins.Ecomzen.Gifts.OrderDetails.GiftCost"):</span>
+                        <span class="value">@Model.GiftCostFormatted</span>
+                    </li>
+                } *@
+            </ul>
+        </div>
+    </div>
+}

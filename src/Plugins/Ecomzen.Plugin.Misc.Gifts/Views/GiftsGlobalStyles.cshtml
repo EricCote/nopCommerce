@@ -1,4 +1,5 @@
 ﻿@model Ecomzen.Plugin.Misc.Gifts.Models.GiftsGlobalStylesModel
+@inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
 
 @{
     var InsufficientWalletMessage = T("Plugins.Ecomzen.Gifts.InsufficientWallet");
@@ -21,6 +22,9 @@
     var giftHoverBorder = Model.GiftButtonBorderHover;
     var exceedHoverBg = Model.ExceedButtonBackgroundHover;
     var exceedHoverBorder = Model.ExceedButtonBorderHover;
+
+    // Register the JavaScript file using NopHtml - use the correct deployed path
+    NopHtml.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Ecomzen.Gifts/wwwroot/js/my-error-popup.js");
 }
 
 <text>
@@ -149,7 +153,7 @@
             // displayNotif(message, messagetype, timeout)
             // messagetype: 'error' for red, 'success' for green, 'warning' for orange
             // timeout: 0 = no auto-hide, or milliseconds
-            displayBarNotification(text, messageType, timeout);
+            myPopupError(text, "@T("Plugins.Ecomzen.Gifts.Dismiss")", messageType, timeout);
          }
 
 
@@ -213,13 +217,10 @@
                     // Check if it exceeds wallet
                     if (exceedingProductIdsSet.has(productId)) {
                         productElement.setAttribute('data-exceeds-wallet', 'true');
-                        console.log(`Product ID ${productId} exceeds wallet limit`);
-
+            
                         // Override click handler for BOTH button types
                         if (button) {
-                            console.log(`Overriding click for Product ID ${productId} button`);
                             button.onclick = function(e) {
-                                console.log(`Blocked add to cart for Product ID ${productId}`);
                                 e.preventDefault();
                                 e.stopPropagation();
 
@@ -250,4 +251,4 @@
             });
         });
     </script>
-</text></text>
+</text>

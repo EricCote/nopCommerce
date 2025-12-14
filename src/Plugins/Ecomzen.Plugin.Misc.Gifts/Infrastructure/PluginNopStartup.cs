@@ -18,7 +18,9 @@ public class PluginNopStartup : INopStartup
     {
         // Register the gifts wallet service
         services.AddScoped<IGiftsWalletService, GiftsWalletService>();
-
+        
+        // Register the gifts stats service
+        services.AddScoped<IGiftsStatsService, GiftsStatsService>();
 
         services.Configure<RazorViewEngineOptions>(options =>
         {
