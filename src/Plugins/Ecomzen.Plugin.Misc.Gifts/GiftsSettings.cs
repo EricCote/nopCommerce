@@ -71,4 +71,24 @@ public class GiftsSettings : ISettings
     /// Gets or sets the locked gift text
     /// </summary>
     public string LockedText { get; set; }
+
+    /// <summary>
+    /// Gets or sets the description title color
+    /// </summary>
+    public string DescriptionTitleColor { get; set; } = "#333333";
+
+    /// <summary>
+    /// Gets or sets the description background color
+    /// </summary>
+    public string DescriptionBackColor { get; set; } = "#F8F9FA";
+
+    /// <summary>
+    /// Gets or sets the description border color
+    /// </summary>
+    public string DescriptionBorderColor { get; set; } = "#DEE2E6";
+
+    /// <summary>
+    /// Gets or sets the description highlight color
+    /// </summary>
+    public string DescriptionHighlightColor { get; set; } = "#3b82f6";
 }

@@ -97,6 +97,10 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             ExceedButtonForeground = "#FFFFFF",
             ExceedButtonBackground = "#DC3545",
             ExceedButtonBorder = "#DC3545",
+            DescriptionTitleColor = "#333333",
+            DescriptionBackColor = "#F8F9FA",
+            DescriptionBorderColor = "#DEE2E6",
+            DescriptionHighlightColor = "#3b82f6",
             LockedText = "🔒 Locked",
             DescriptionDetails = @"
        <p>You can select gift products up depending on the products in your cart. 
@@ -106,6 +110,8 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             DescriptionTitle= "How to unlock your gifts"
 
         });
+
+
 
         // Activate widget
         if (!_widgetSettings.ActiveWidgetSystemNames.Contains("Ecomzen.Gifts"))
@@ -144,6 +150,14 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground.Hint"] = "Background color for exceeded wallet buttons (e.g., #DC3545)",
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder"] = "Exceeded Wallet Button Border Color",
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder.Hint"] = "Border color for exceeded wallet buttons (e.g., #DC3545)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionTitleColor"] = "Description Title Color",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionTitleColor.Hint"] = "Color for description title text (e.g., #333333)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBackColor"] = "Description Background Color",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBackColor.Hint"] = "Background color for description section (e.g., #F8F9FA)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBorderColor"] = "Description Border Color",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBorderColor.Hint"] = "Border color for description section (e.g., #DEE2E6)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionHighlightColor"] = "Description Highlight Color",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionHighlightColor.Hint"] = "Highlight color for the chevron (e.g., #3b82f6)",
             ["Plugins.Ecomzen.Gifts.GiftWallet"] = "Your Gift Wallet",
             ["Plugins.Ecomzen.Gifts.NoProducts"] = "No gifts are available at this time.",
             ["Plugins.Ecomzen.Gifts.Spent"] = "Spent",
@@ -192,6 +206,14 @@ public class GiftsPlugin : BasePlugin, IWidgetPlugin
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBackground.Hint"] = "Couleur de fond des boutons portefeuille dépassé (ex: #DC3545)",
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder"] = "Couleur de bordure du bouton portefeuille dépassé",
             ["Plugins.Ecomzen.Gifts.Fields.ExceedButtonBorder.Hint"] = "Couleur de bordure des boutons portefeuille dépassé (ex: #DC3545)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionTitleColor"] = "Couleur du titre de description",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionTitleColor.Hint"] = "Couleur du texte du titre de description (ex: #333333)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBackColor"] = "Couleur de fond de description",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBackColor.Hint"] = "Couleur de fond de la section description (ex: #F8F9FA)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBorderColor"] = "Couleur de bordure de description",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionBorderColor.Hint"] = "Couleur de bordure de la section description (ex: #DEE2E6)",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionHighlightColor"] = "Couleur de surbrillance de description",
+            ["Plugins.Ecomzen.Gifts.Fields.DescriptionHighlightColor.Hint"] = "Couleur de surbrillance pour le chevron (ex: #3b82f6)",
             ["Plugins.Ecomzen.Gifts.GiftWallet"] = "Votre portefeuille cadeaux",
             ["Plugins.Ecomzen.Gifts.NoProducts"] = "Aucun cadeau n'est disponible pour le moment.",
             ["Plugins.Ecomzen.Gifts.Spent"] = "Dépensé",

@@ -53,11 +53,6 @@ public class GiftsGlobalStylesViewComponent : NopViewComponent
             workingLanguage.Id, 
             0);
 
-        // If no custom locked text is set, use the default localization resource
-        if (string.IsNullOrEmpty(lockedText))
-        {
-            lockedText = await _localizationService.GetResourceAsync("Plugins.Ecomzen.Gifts.Locked");
-        }
 
         var giftValue = await _priceFormatter.FormatPriceAsync(walletCalculation.GiftValue, true, false);
 

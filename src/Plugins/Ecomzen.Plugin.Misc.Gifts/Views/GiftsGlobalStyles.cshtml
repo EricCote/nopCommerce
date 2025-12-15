@@ -32,8 +32,8 @@
         
         
         /* ========================================
-                               🎁 GIFT PRODUCT STYLING - PRODUCT LISTINGS
-                               ======================================== */
+           🎁 GIFT PRODUCT STYLING - PRODUCT LISTINGS
+           ======================================== */
 
         /* Style ANY product box that is a gift product with configured colors */
         .product-item[data-is-gift="true"] .product-box-add-to-cart-button {
@@ -70,8 +70,8 @@
         }
 
         /* ========================================
-                               🎁 GIFT PRODUCT STYLING - PRODUCT DETAILS PAGE
-                               ======================================== */
+           🎁 GIFT PRODUCT STYLING - PRODUCT DETAILS PAGE
+           ======================================== */
 
         /* Target the product details page container */
         .product-details-page [data-productid][data-is-gift="true"] .add-to-cart-button,
@@ -115,8 +115,8 @@
         }
 
         /* ========================================
-                               🎁 HOVER COLORS (Calculated in C#)
-                               ======================================== */
+           🎁 HOVER COLORS (Calculated in C#)
+           ======================================== */
 
         /* Gift button hover styles */
         .product-item[data-is-gift="true"] .product-box-add-to-cart-button:hover,
@@ -148,12 +148,14 @@
             firstRow.insertAdjacentElement('afterend', newRow);
          }
 
-         function displayNotif(text, messageType, timeout){
+         function displayNotif(text, messageType, timeout, callback) {
             // ✅ Use NopCommerce's native bar notification system
             // displayNotif(message, messagetype, timeout)
             // messagetype: 'error' for red, 'success' for green, 'warning' for orange
             // timeout: 0 = no auto-hide, or milliseconds
-            myPopupError(text, "@T("Plugins.Ecomzen.Gifts.Dismiss")", messageType, timeout);
+            myPopupError(text, "@T("Plugins.Ecomzen.Gifts.Dismiss")", messageType, timeout, callback);
+        
+
          }
 
 
@@ -182,15 +184,15 @@
             if (isShoppingCartPage && itemsWereRemoved){
                // Show notification
 
-               displayNotif(hasGlobalDiscountApplied ? `@T("Plugins.Ecomzen.Gifts.ApplyingGlobalDiscount")`  :  `@T("Plugins.Ecomzen.Gifts.ItemsRemovedNotification")`, 'warning', 7000);
+               displayNotif(hasGlobalDiscountApplied ? `@T("Plugins.Ecomzen.Gifts.ApplyingGlobalDiscount")`  :  `@T("Plugins.Ecomzen.Gifts.ItemsRemovedNotification")`, 'warning', 7000,finished);
 
                // Trigger cart update
-               setTimeout(function() {
+               function finished() {
                    var updateButton = document.querySelector('#updatecart');
                    if (updateButton) {
                        updateButton.click();
                    }
-               }, 500);
+               };
            }
 
             //When on a shopping cart page, display the gift value in the totals section

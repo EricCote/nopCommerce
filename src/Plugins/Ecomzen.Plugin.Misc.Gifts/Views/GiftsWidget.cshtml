@@ -2,17 +2,16 @@
 <text>
 <style>
         :root {
-            --bg-card: #ffffff;
-            --border-color: #e5e7eb; /* gray-200 */
-            --primary-color: #3b82f6; /* blue-500 */
-            --text-gray-900: #111827;
-            --text-gray-700: #374151;
+            --title-color: @Model.DescriptionTitleColor;
+            --bg-color: @Model.DescriptionBackColor;
+            --border-color: @Model.DescriptionBorderColor;
+            --highlight-color: @Model.DescriptionHighlightColor;
             --font-family: Roboto, sans-serif;
         }
 
         /* Container (details) */
         .accordion-item {
-            background-color: var(--bg-card);
+            background-color: var(--bg-color);
             border-radius: 0.5rem; /* rounded-lg */
             border: 2px solid var(--border-color); /* border-2 border-border */
             overflow: hidden;
@@ -22,7 +21,7 @@
         }
 
             .accordion-item:hover {
-                border-color: var(--primary-color); /* hover:border-primary */
+                border-color: var(--highlight-color); 
             }
 
         /* Trigger (summary) */
@@ -46,7 +45,7 @@
             font-size: 1.5rem; /* text-2xl */
             line-height: 2rem;
             font-weight: 700; /* font-bold */
-            color: var(--text-gray-900);
+            color: var(--title-color);
             margin: 0;
         }
 
@@ -54,7 +53,7 @@
         .accordion-icon {
             width: 1.5rem;
             height: 1.5rem;
-            color: var(--primary-color);
+            color: var(--highlight-color);
             transition: transform 300ms ease;
         }
 

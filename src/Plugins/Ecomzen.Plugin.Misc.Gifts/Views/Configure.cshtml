@@ -15,7 +15,15 @@
     if (string.IsNullOrEmpty(Model.ExceedButtonBackground))
         Model.ExceedButtonBackground = "#DC3545";
     if (string.IsNullOrEmpty(Model.ExceedButtonBorder))
-        Model.ExceedButtonBorder = "#DC3545"; 
+        Model.ExceedButtonBorder = "#DC3545";
+    if (string.IsNullOrEmpty(Model.DescriptionTitleColor))
+        Model.DescriptionTitleColor = "#333333";
+    if (string.IsNullOrEmpty(Model.DescriptionBackColor))
+        Model.DescriptionBackColor = "#F8F9FA";
+    if (string.IsNullOrEmpty(Model.DescriptionBorderColor))
+        Model.DescriptionBorderColor = "#DEE2E6";
+    if (string.IsNullOrEmpty(Model.DescriptionHighlightColor))
+        Model.DescriptionHighlightColor = "#3b82f6";
 }
 
 <style>
@@ -92,20 +100,20 @@
                     @<div>
                         <div class="form-group row">
                             <div class="col-md-3">
-                                <nop-label asp-for="@Model.Locales[item].GiftsDescription" />
-                            </div>
-                            <div class="col-md-9">
-                                <nop-editor asp-for="@Model.Locales[item].GiftsDescription" asp-template="RichEditor" />
-                                <span asp-validation-for="@Model.Locales[item].GiftsDescription"></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-3">
                                 <nop-label asp-for="@Model.Locales[item].TitleDescription" />
                             </div>
                             <div class="col-md-9">
                                 <nop-editor asp-for="@Model.Locales[item].TitleDescription" />
                                 <span asp-validation-for="@Model.Locales[item].TitleDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="@Model.Locales[item].GiftsDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="@Model.Locales[item].GiftsDescription" asp-template="RichEditor" />
+                                <span asp-validation-for="@Model.Locales[item].GiftsDescription"></span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -123,20 +131,20 @@
                     @<div>
                         <div class="form-group row">
                             <div class="col-md-3">
-                                <nop-label asp-for="GiftsDescription" />
-                            </div>
-                            <div class="col-md-9">
-                                <nop-editor asp-for="GiftsDescription" asp-template="RichEditor" />
-                                <span asp-validation-for="GiftsDescription"></span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-md-3">
                                 <nop-label asp-for="TitleDescription" />
                             </div>
                             <div class="col-md-9">
                                 <nop-editor asp-for="TitleDescription" />
                                 <span asp-validation-for="TitleDescription"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="GiftsDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-editor asp-for="GiftsDescription" asp-template="RichEditor" />
+                                <span asp-validation-for="GiftsDescription"></span>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -255,6 +263,71 @@
             </div>
         </div>
 
+        <!-- Description Color Settings Card -->
+        <div class="card card-default">
+            <div class="card-header">
+                <h5>Description Colors</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DescriptionTitleColor" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-desc-title" 
+                                   value="@Model.DescriptionTitleColor" />
+                            <nop-editor asp-for="DescriptionTitleColor" />
+                        </div>
+                        <span asp-validation-for="DescriptionTitleColor"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DescriptionBackColor" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-desc-bg" 
+                                   value="@Model.DescriptionBackColor" />
+                            <nop-editor asp-for="DescriptionBackColor" />
+                        </div>
+                        <span asp-validation-for="DescriptionBackColor"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DescriptionBorderColor" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-desc-border" 
+                                   value="@Model.DescriptionBorderColor" />
+                            <nop-editor asp-for="DescriptionBorderColor" />
+                        </div>
+                        <span asp-validation-for="DescriptionBorderColor"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DescriptionHighlightColor" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="color-picker-group">
+                            <input type="color" 
+                                   id="color-picker-desc-highlight" 
+                                   value="@Model.DescriptionHighlightColor" />
+                            <nop-editor asp-for="DescriptionHighlightColor" />
+                        </div>
+                        <span asp-validation-for="DescriptionHighlightColor"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Save Button -->
         <div class="card card-default">
             <div class="card-body">
@@ -301,6 +374,10 @@
         syncColorInputs('#color-picker-exceed-fg', '#@Html.IdFor(model => model.ExceedButtonForeground)');
         syncColorInputs('#color-picker-exceed-bg', '#@Html.IdFor(model => model.ExceedButtonBackground)');
         syncColorInputs('#color-picker-exceed-border', '#@Html.IdFor(model => model.ExceedButtonBorder)');
+        syncColorInputs('#color-picker-desc-title', '#@Html.IdFor(model => model.DescriptionTitleColor)');
+        syncColorInputs('#color-picker-desc-bg', '#@Html.IdFor(model => model.DescriptionBackColor)');
+        syncColorInputs('#color-picker-desc-border', '#@Html.IdFor(model => model.DescriptionBorderColor)');
+        syncColorInputs('#color-picker-desc-highlight', '#@Html.IdFor(model => model.DescriptionHighlightColor)');
         
         // Ensure TinyMCE content is synced before form submission
         $('form').on('submit', function(e) {

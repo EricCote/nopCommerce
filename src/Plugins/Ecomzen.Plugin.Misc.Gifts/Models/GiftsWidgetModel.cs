@@ -12,7 +12,7 @@ public record GiftsWidgetModel
     public decimal GiftWalletAmount { get; set; }
     public decimal GiftWalletSpent { get; set; }
 
-    public decimal giftWalletRemaining => GiftWalletAmount - GiftWalletSpent;
+    public decimal GiftWalletRemaining => GiftWalletAmount - GiftWalletSpent;
     public string FormattedGiftWalletAmount { get; set; }
     public string FormattedGiftWalletSpent { get; set; }
 
@@ -22,5 +22,9 @@ public record GiftsWidgetModel
     public string GiftsDescription { get; set; }
     public string TitleDescription { get; set; }
     public string LockedText { get; set; }
+    public string DescriptionTitleColor { get; set; }
+    public string DescriptionBackColor { get; set; }
+    public string DescriptionBorderColor { get; set; }
+    public string DescriptionHighlightColor { get; set; }
     public IEnumerable<ProductOverviewModel> Products { get; set; }
 }

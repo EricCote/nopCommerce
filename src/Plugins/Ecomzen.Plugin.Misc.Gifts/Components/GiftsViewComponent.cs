@@ -124,6 +124,10 @@ public class GiftsViewComponent : NopViewComponent
             GiftsDescription = giftsDescription,
             TitleDescription = titleDescription,
             LockedText = lockedText,
+            DescriptionTitleColor = settings.DescriptionTitleColor ?? "#333333",
+            DescriptionBackColor = settings.DescriptionBackColor ?? "#F8F9FA",
+            DescriptionBorderColor = settings.DescriptionBorderColor ?? "#DEE2E6",
+            DescriptionHighlightColor = settings.DescriptionHighlightColor ?? "#3b82f6",
             Products = productOverviewModels
         };
         

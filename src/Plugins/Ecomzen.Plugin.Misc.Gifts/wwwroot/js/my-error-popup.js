@@ -16,7 +16,7 @@ function getRandomEmoji() {
  *
  * @param {string} text - The error message to display inside the popup.
  */
-function myPopupError(text,btnText) {
+function myPopupError(text, btnText, messageType, timeout, callback) {
   // 1. Check if an existing overlay is present and remove it 
   // to prevent multiple popups from stacking.
   const existingOverlay = document.getElementById('popup-error-overlay');
@@ -44,6 +44,7 @@ function myPopupError(text,btnText) {
   // Function to dismiss and clean up the popup
   const dismissPopup = () => {
     overlay.remove();
+    callback && callback();
   };
 
   // 3. Create the error box element
@@ -75,8 +76,10 @@ function myPopupError(text,btnText) {
         height: 80px;
         border-radius: 100%;
         font-size: 50px; /* Large size */
+        line-height: 1.0;
         display: flex;
-        align-contents: center;
+        flex-wrap: wrap;
+        align-items: center;
         justify-content: center;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
         position: absolute;

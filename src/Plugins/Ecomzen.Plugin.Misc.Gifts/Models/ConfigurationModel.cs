@@ -51,6 +51,18 @@ public record ConfigurationModel : BaseNopModel, ILocalizedModel<ConfigurationLo
     [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.LockedText")]
     public string LockedText { get; set; }
 
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.DescriptionTitleColor")]
+    public string DescriptionTitleColor { get; set; }
+
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.DescriptionBackColor")]
+    public string DescriptionBackColor { get; set; }
+
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.DescriptionBorderColor")]
+    public string DescriptionBorderColor { get; set; }
+
+    [NopResourceDisplayName("Plugins.Ecomzen.Gifts.Fields.DescriptionHighlightColor")]
+    public string DescriptionHighlightColor { get; set; }
+
     public IList<SelectListItem> AvailableCategories { get; set; }
     
     public IList<ConfigurationLocalizedModel> Locales { get; set; }

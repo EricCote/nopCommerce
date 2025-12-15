@@ -71,7 +71,11 @@ public class GiftsController : BasePluginController
             GiftButtonBorder = settings.GiftButtonBorder,
             ExceedButtonForeground = settings.ExceedButtonForeground,
             ExceedButtonBackground = settings.ExceedButtonBackground,
-            ExceedButtonBorder = settings.ExceedButtonBorder
+            ExceedButtonBorder = settings.ExceedButtonBorder,
+            DescriptionTitleColor = settings.DescriptionTitleColor ?? "#333333",
+            DescriptionBackColor = settings.DescriptionBackColor ?? "#F8F9FA",
+            DescriptionBorderColor = settings.DescriptionBorderColor ?? "#DEE2E6",
+            DescriptionHighlightColor = settings.DescriptionHighlightColor
         };
 
         model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<ConfigurationLocalizedModel>(async (locale, languageId) =>
@@ -122,6 +126,10 @@ public class GiftsController : BasePluginController
         settings.ExceedButtonForeground = model.ExceedButtonForeground ?? "#FFFFFF";
         settings.ExceedButtonBackground = model.ExceedButtonBackground ?? "#DC3545";
         settings.ExceedButtonBorder = model.ExceedButtonBorder ?? "#DC3545";
+        settings.DescriptionTitleColor = model.DescriptionTitleColor ?? "#333333";
+        settings.DescriptionBackColor = model.DescriptionBackColor ?? "#F8F9FA";
+        settings.DescriptionBorderColor = model.DescriptionBorderColor ?? "#DEE2E6";
+        settings.DescriptionHighlightColor = model.DescriptionHighlightColor ?? "#3b82f6";
         
         // Save all settings (this creates the Setting records in the database)
         await _settingService.SaveSettingAsync(settings);
