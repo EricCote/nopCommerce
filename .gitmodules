@@ -1,3 +1,6 @@
 [submodule "src/Plugins/Nop-Commerce-Gifts-Plugin"]
 	path = src/Plugins/Ecomzen.Plugin.Misc.Gifts
 	url = https://github.com/EcomZen/Nop-Commerce-Gifts-Plugin.git
+[submodule "src/Plugins/Ecomzen.Plugin.Shipping.CP"]
+	path = src/Plugins/Ecomzen.Plugin.Shipping.CP
+	url = https://github.com/EcomZen/Nop-Commerce-Shipping-Plugin.git
