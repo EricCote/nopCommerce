@@ -4,3 +4,6 @@
 [submodule "src/Plugins/Ecomzen.Plugin.Shipping.CP"]
 	path = src/Plugins/Ecomzen.Plugin.Shipping.CP
 	url = https://github.com/EcomZen/Nop-Commerce-Shipping-Plugin.git
+[submodule "src/Plugins/Ecomzen.Plugin.Misc.Varia"]
+	path = src/Plugins/Ecomzen.Plugin.Misc.Varia
+	url = https://github.com/EcomZen/Nop-Commerce-Varia-Plugin.git
