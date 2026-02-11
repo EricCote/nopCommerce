@@ -1,18 +1,49 @@
 services:
-    nopcommerce_web:
-        build: .
-        container_name: nopcommerce
+    # nopcommerce_web:
+    #     build: .
+    #     container_name: nopcommerce
+    #     ports:
+    #         - "80:80"
+    #     depends_on:
+    #         - data
+    nop_data:
+        image: "postgres:latest"
+        container_name: nop-postgres
+        restart: unless-stopped
         ports:
-            - "80:80"
-        depends_on:
-            - nopcommerce_database
-    nopcommerce_database:
-        image: "mcr.microsoft.com/mssql/server:2019-latest"
-        container_name: nopcommerce_mssql_server
+            - "5432:5432"
         environment:
-            SA_PASSWORD: "nopCommerce_db_password"
-            ACCEPT_EULA: "Y"
-            MSSQL_PID: "Express"
+          POSTGRES_DB: ${POSTGRES_DB}
+          POSTGRES_USER: ${POSTGRES_USER}
+          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        healthcheck:
+          test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+          interval: 5s
+          timeout: 5s
+          retries: 5
+        volumes:
+          - nop-db:/var/lib/postgresql
+          - ./settings/init-extensions.sql:/docker-entrypoint-initdb.d/init-extensions.sql:ro,z
+
+
+    pgadmin:
+        image: dpage/pgadmin4
+        container_name: nop-pgadmin
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@ecomzen.ca
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+        restart: unless-stopped
+        depends_on:
+            nop_data:
+                condition: service_healthy
+        ports:
+           - "5050:80"
+        volumes:
+            - pgadmin-data:/var/lib/pgadmin
+            - ./backups:/var/lib/pgadmin/storage
+            - ./settings/servers.json:/pgadmin4/servers.json
+ 
 
 volumes:
-  nopcommerce_data:            
+    nop-db:
+    pgadmin-data:           
