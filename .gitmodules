@@ -7,3 +7,6 @@
 [submodule "src/Plugins/Ecomzen.Plugin.Misc.Varia"]
 	path = src/Plugins/Ecomzen.Plugin.Misc.Varia
 	url = https://github.com/EcomZen/Nop-Commerce-Varia-Plugin.git
+[submodule "src/Plugins/Ecomzen.Plugin.Misc.Piximport"]
+	path = src/Plugins/Ecomzen.Plugin.Misc.Piximport
+	url = https://github.com/EcomZen/Nop-Commerce-Piximport-Plugin.git
