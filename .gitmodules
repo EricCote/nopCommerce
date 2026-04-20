@@ -10,3 +10,6 @@
 [submodule "src/Plugins/Ecomzen.Plugin.Misc.Piximport"]
 	path = src/Plugins/Ecomzen.Plugin.Misc.Piximport
 	url = https://github.com/EcomZen/Nop-Commerce-Piximport-Plugin.git
+[submodule "src/LicenseServer"]
+	path = src/LicenseServer
+	url = https://github.com/EcomZen/Nop-Commerce-LicenseServer.git
